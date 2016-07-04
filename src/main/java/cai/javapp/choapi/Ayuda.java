@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 anton
+ * Copyright (C) 2016 Antonio Horrillo Horrillo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,10 @@
 package cai.javapp.choapi;
 
 /**
+ * Aplicación Java para instalar software de Chocolatey.
  *
- * @author anton
+ * @author Antonio Horrillo Horrillo
+ * @version 1.2.0.0
  */
 public class Ayuda extends javax.swing.JFrame {
 
@@ -44,6 +46,7 @@ public class Ayuda extends javax.swing.JFrame {
         firma = new javax.swing.JLabel();
         texto1 = new javax.swing.JLabel();
         texto2 = new javax.swing.JLabel();
+        texto3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
@@ -71,9 +74,13 @@ public class Ayuda extends javax.swing.JFrame {
         texto1.setAlignmentX(0.5F);
         texto1.setAutoscrolls(true);
 
-        texto2.setText("<html> Los comandos de Chocolatey son los empleados por Choapi, lanzando una powershell y ejecutando dicho comando. De esta forma, el usuario elige que aplicación quiere instalar, y Choapi la instala. Además, el usuario tiene la opción de almacenar las aplicaciones que use con frecuencia en una base de datos SQLite, pudiendo acceder a ella y agregar o eliminar aplicaciones.");
+        texto2.setText("<html>Los comandos de Chocolatey son los empleados por Choapi, lanzando powershell y ejecutandolos. Cuando un usuario elige una aplicación a instalar Choapi jejecuta powershell con el comando necesario para instalar, actualizar o desinstalar la aplicación seleccionada.Además, el usuario tiene la opción de almacenar las aplicaciones que use con frecuencia en una base de datos SQLite, pudiendo acceder a ella y agregar o eliminar aplicaciones.");
         texto2.setAlignmentX(0.5F);
         texto2.setAutoscrolls(true);
+
+        texto3.setText("<html>La aplicación permite agregar y eliminar aplicaciones en la base de datos. Ademas, permite la instalación y actualización de todas las aplicaciones que esten almacenadas en ella. De esta forma la actualización o instalación de todas las aplicaciones se realiza directamente.</html>");
+        texto3.setAlignmentX(0.5F);
+        texto3.setAutoscrolls(true);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -82,14 +89,15 @@ public class Ayuda extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(texto1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 628, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(aceptar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(firma, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addComponent(texto2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(texto1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(texto2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(texto3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -101,7 +109,9 @@ public class Ayuda extends javax.swing.JFrame {
                 .addComponent(texto1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(texto2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 229, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(texto3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
                 .addComponent(firma)
                 .addGap(18, 18, 18)
                 .addComponent(aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -169,5 +179,6 @@ public class Ayuda extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel texto1;
     private javax.swing.JLabel texto2;
+    private javax.swing.JLabel texto3;
     // End of variables declaration//GEN-END:variables
 }

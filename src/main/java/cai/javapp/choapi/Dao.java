@@ -34,7 +34,7 @@ import java.util.ArrayList;
  * Aplicación Java para instalar software de Chocolatey.
  *
  * @author Antonio Horrillo Horrillo
- * @version 1.1.0.0
+ * @version 1.2.0.0
  */
 public class Dao extends Sistema {
 

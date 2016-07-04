@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 anton
+ * Copyright (C) 2016 Antonio Horrillo Horrillo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,10 @@
 package cai.javapp.choapi;
 
 /**
+ * Aplicación Java para instalar software de Chocolatey.
  *
- * @author anton
+ * @author Antonio Horrillo Horrillo
+ * @version 1.2.0.0
  */
 public class AcercaDe extends javax.swing.JFrame {
 
@@ -46,7 +48,6 @@ public class AcercaDe extends javax.swing.JFrame {
         salidajavahome = new javax.swing.JLabel();
         texto1 = new javax.swing.JLabel();
         texto2 = new javax.swing.JLabel();
-        texto3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
@@ -58,7 +59,7 @@ public class AcercaDe extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
         jLabel1.setForeground(java.awt.SystemColor.textHighlight);
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Choapi v1.1.0.0");
+        jLabel1.setText("Acerca de Choapi");
 
         jButton1.setText("Aceptar");
         jButton1.setPreferredSize(new java.awt.Dimension(100, 30));
@@ -74,17 +75,13 @@ public class AcercaDe extends javax.swing.JFrame {
 
         salidajavahome.setText("salidajavahome");
 
-        texto1.setText("<html> La aplicación Choapi, Chocolatey Application Instaler, ha sido escrita con la finalidad de facilitar la instalación de aplicaciones empleando el sistema de aplicaciones de Chocolatey. Como se definen ellos mismos: Chocolatey NuGet is a Machine Package Manager, somewhat like apt-get, but built with Windows in mind.  Choapi es una aplicación escrita en lenguaje Java, sirviendo de entorno gráfico o GUI, para interactuar con la consola Powershell de Windows, donde se ejecutan los comandos de Chocolatey.  ");
+        texto1.setText("<html>La aplicación Choapi, Chocolatey App Instaler, ha sido desarrollada en Java en un proyecto de NetBeans con Maven. Se emplean las  dependencias Font Awesome, JUnit, Log4J, SQLlite y los iconos. Toda la información se encuentra accesible en <a href=\"http://www.antoniohorrillo.com\">antoniohorrillo.com</a>.</html>");
         texto1.setAlignmentX(0.5F);
         texto1.setAutoscrolls(true);
 
-        texto2.setText("<html>Los comandos de Chocolatey son los empleados por Choapi, lanzando powershell y ejecutandolos. Cuando un usuario elige una aplicación a instalar Choapi jejecuta powershell con el comando necesario para instalar, actualizar o desinstalar la aplicación seleccionada.Además, el usuario tiene la opción de almacenar las aplicaciones que use con frecuencia en una base de datos SQLite, pudiendo acceder a ella y agregar o eliminar aplicaciones.");
+        texto2.setText("<html> Copyright (C) 2016 Antonio Horrillo Horrillo. This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>. </html>");
         texto2.setAlignmentX(0.5F);
         texto2.setAutoscrolls(true);
-
-        texto3.setText("<html> Los comandos de Chocolatey son los empleados por Choapi, lanzando una powershell y ejecutando dicho comando. De esta forma, el usuario elige que aplicación quiere instalar, y Choapi la instala. Además, el usuario tiene la opción de almacenar las aplicaciones que use con frecuencia en una base de datos SQLite, pudiendo acceder a ella y agregar o eliminar aplicaciones.");
-        texto3.setAlignmentX(0.5F);
-        texto3.setAutoscrolls(true);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -93,7 +90,7 @@ public class AcercaDe extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 628, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -102,8 +99,7 @@ public class AcercaDe extends javax.swing.JFrame {
                     .addComponent(texto1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(texto2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(salidajavahome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(salidaso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(texto3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(salidaso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -119,9 +115,7 @@ public class AcercaDe extends javax.swing.JFrame {
                 .addComponent(texto1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(texto2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(texto3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 133, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 156, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -199,6 +193,5 @@ public class AcercaDe extends javax.swing.JFrame {
     private javax.swing.JLabel salidaso;
     private javax.swing.JLabel texto1;
     private javax.swing.JLabel texto2;
-    private javax.swing.JLabel texto3;
     // End of variables declaration//GEN-END:variables
 }

@@ -51,8 +51,7 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="texto1" pref="0" max="32767" attributes="0"/>
-                      <Component id="jLabel1" alignment="1" pref="620" max="32767" attributes="0"/>
+                      <Component id="jLabel1" alignment="1" pref="628" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -60,7 +59,9 @@
                               <Component id="firma" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
+                      <Component id="texto1" alignment="0" pref="0" max="32767" attributes="0"/>
                       <Component id="texto2" alignment="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="texto3" alignment="0" pref="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -75,7 +76,9 @@
                   <Component id="texto1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="texto2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="229" max="32767" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="texto3" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="110" max="32767" attributes="0"/>
                   <Component id="firma" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="aceptar" min="-2" max="-2" attributes="0"/>
@@ -122,7 +125,14 @@
         </Component>
         <Component class="javax.swing.JLabel" name="texto2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt; Los comandos de Chocolatey son los empleados por Choapi, lanzando una powershell y ejecutando dicho comando. De esta forma, el usuario elige que aplicaci&#xf3;n quiere instalar, y Choapi la instala. Adem&#xe1;s, el usuario tiene la opci&#xf3;n de almacenar las aplicaciones que use con frecuencia en una base de datos SQLite, pudiendo acceder a ella y agregar o eliminar aplicaciones."/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;Los comandos de Chocolatey son los empleados por Choapi, lanzando powershell y ejecutandolos. Cuando un usuario elige una aplicaci&#xf3;n a instalar Choapi jejecuta powershell con el comando necesario para instalar, actualizar o desinstalar la aplicaci&#xf3;n seleccionada.Adem&#xe1;s, el usuario tiene la opci&#xf3;n de almacenar las aplicaciones que use con frecuencia en una base de datos SQLite, pudiendo acceder a ella y agregar o eliminar aplicaciones."/>
+            <Property name="alignmentX" type="float" value="0.5"/>
+            <Property name="autoscrolls" type="boolean" value="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="texto3">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;La aplicaci&#xf3;n permite agregar y eliminar aplicaciones en la base de datos. Ademas, permite la instalaci&#xf3;n y actualizaci&#xf3;n de todas las aplicaciones que esten almacenadas en ella. De esta forma la actualizaci&#xf3;n o instalaci&#xf3;n de todas las aplicaciones se realiza directamente.&lt;/html&gt;"/>
             <Property name="alignmentX" type="float" value="0.5"/>
             <Property name="autoscrolls" type="boolean" value="true"/>
           </Properties>

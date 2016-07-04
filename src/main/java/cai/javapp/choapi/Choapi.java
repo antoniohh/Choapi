@@ -24,17 +24,25 @@ package cai.javapp.choapi;
  * Importamos las librerías necesarias.
  */
 import java.awt.Color;
+import java.awt.FileDialog;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import jiconfont.icons.FontAwesome;
 import jiconfont.swing.IconFontSwing;
 import org.apache.log4j.Logger;
@@ -43,7 +51,7 @@ import org.apache.log4j.Logger;
  * Aplicación Java para instalar software de Chocolatey.
  *
  * @author Antonio Horrillo Horrillo
- * @version 1.1.0.0
+ * @version 1.2.0.0
  */
 public class Choapi extends javax.swing.JFrame {
 
@@ -675,17 +683,61 @@ public class Choapi extends javax.swing.JFrame {
                 // Log info de conexión.
                 LOG.info("Encontrado archivo de base de datos.");
             } else {
-                System.out.println("Archivo de base de datos no existe.");
-                JOptionPane.showMessageDialog(this, "No existe el archivo de la base "
-                        + "de datos. Creando un nuevo archivo en:\n" + SISTEMA.getDbRuta());
-                System.out.println("Creando archivo de base de datos...");
-                // Metodos de la clase Dao() para crear la base de datos y tablas.
-                DAO.crearDB();
-                DAO.crearTabla();
-                // Log info de conexión.
-                LOG.info("Creando archivo de base de datos...");
+                System.out.println("Archivo de base de datos no existe.");               
+                LOG.info("Archivo de base de datos no existe.");
+                // Preguntamos al usuario si desea importar el archivo o crear uno nuevo.               
+                Object[] opciones = { "Nueva Base de Datos", "Importar Base de Datos" };
+                int opcion = JOptionPane.showOptionDialog(null, "No existe el archivo de base de datos 'choapi.db'. \n ¿Desea importar el archivo o crear uno nuevo?", "choapi.db", 
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, opciones, opciones[0]);
+
+                if (opcion == JOptionPane.YES_OPTION) {                   
+                    // Metodos de la clase Dao() para crear la base de datos y tablas.                   
+                    DAO.crearDB();
+                    DAO.crearTabla();
+                    // Log info de conexión.
+                    LOG.info("Creando archivo de base de datos en "+SISTEMA.getDbFile()+".");
+                    System.out.println("Creando archivo de base de datos en "+SISTEMA.getDbFile()+".");
+                    
+                } else {
+                     // Log info de conexión.
+                    LOG.info("Importando el archivo choapi.db...");
+                    System.out.println("Importando el archivo choapi.db...");                 
+                    // La Clase JFileChooser nos permitirá Abrir el archivo choapi.db.
+                    JFileChooser fc = new JFileChooser();
+                    fc.setFileSelectionMode(JFileChooser.FILES_ONLY);                  
+                    // Creamos el filtro para el archivo de base de datos.
+                    FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivo choapi.db","db");
+                    // Indicamos el filtro.
+                    fc.setFileFilter(filtro);                   
+                    // Mostramos el explorador de archivos.
+                    fc.showOpenDialog(this);                  
+                    // Asignamos el archivo seleccionado.
+                    File origen = fc.getSelectedFile();
+                    if (origen == null) {
+                        // Log info de conexión.
+                        LOG.info("Importación del archivo choapi.db cancelada por el usuario. Salida de la aplicación.");
+                        System.out.println("Importación del archivo choapi.db cancelada por el usuario. Salida de la aplicación.");
+                        System.exit(0);
+                    }               
+                    else {
+                        File destino = new File(SISTEMA.getDbFile());                                              
+                        InputStream entradaDB = new FileInputStream(origen);
+                        OutputStream salidaDB = new FileOutputStream(destino);                        
+                        byte[] buf = new byte[1024];
+                        int len;
+                        while ((len = entradaDB.read(buf)) > 0) {
+                            salidaDB.write(buf, 0, len);
+                        }
+                        // Cerramos los Stream.
+                        entradaDB.close();
+                        salidaDB.close();                       
+                        // Log info de conexión.
+                        LOG.info("Importación del archivo choapi.db realizada con éxito");
+                        System.out.println("Importación del archivo choapi.db realizada con éxito");
+                    }
+                }
             }
-        } catch (Exception ex) {
+        } catch (HeadlessException | IOException ex) {
             System.out.println(ex);
             // Log fatal de conexión.
             LOG.fatal("Error al crear la base de datos: ", ex);

@@ -21,8 +21,10 @@
 package cai.javapp.choapi;
 
 /**
+ * Aplicación Java para instalar software de Chocolatey.
  *
- * @author anton
+ * @author Antonio Horrillo Horrillo
+ * @version 1.2.0.0
  */
 public class Progreso extends javax.swing.JFrame {
 

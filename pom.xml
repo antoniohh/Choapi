@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cai.javapp</groupId>
     <artifactId>Choapi</artifactId>
-    <version>1.0.0.0</version>
+    <version>1.2.0.0</version>
     <packaging>jar</packaging>
     <name>CAI (Chocolatey App Instaler)</name>
     <inceptionYear>2016</inceptionYear>

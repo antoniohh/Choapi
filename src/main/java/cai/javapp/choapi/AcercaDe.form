@@ -51,7 +51,7 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel1" alignment="1" pref="620" max="32767" attributes="0"/>
+                      <Component id="jLabel1" alignment="1" pref="628" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -63,7 +63,6 @@
                       <Component id="texto2" alignment="0" pref="0" max="32767" attributes="0"/>
                       <Component id="salidajavahome" alignment="0" max="32767" attributes="0"/>
                       <Component id="salidaso" alignment="0" max="32767" attributes="0"/>
-                      <Component id="texto3" alignment="0" pref="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -82,9 +81,7 @@
                   <Component id="texto1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="texto2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="texto3" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="133" max="32767" attributes="0"/>
+                  <EmptySpace pref="156" max="32767" attributes="0"/>
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jButton1" min="-2" max="-2" attributes="0"/>
@@ -103,7 +100,7 @@
               <Color blue="ff" green="99" id="Resaltado de Texto" palette="2" red="33" type="palette"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="text" type="java.lang.String" value="Choapi v1.1.0.0"/>
+            <Property name="text" type="java.lang.String" value="Acerca de Choapi"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="jButton1">
@@ -134,21 +131,14 @@
         </Component>
         <Component class="javax.swing.JLabel" name="texto1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt; La aplicaci&#xf3;n Choapi, Chocolatey Application Instaler, ha sido escrita con la finalidad de facilitar la instalaci&#xf3;n de aplicaciones empleando el sistema de aplicaciones de Chocolatey. Como se definen ellos mismos: Chocolatey NuGet is a Machine Package Manager, somewhat like apt-get, but built with Windows in mind.  Choapi es una aplicaci&#xf3;n escrita en lenguaje Java, sirviendo de entorno gr&#xe1;fico o GUI, para interactuar con la consola Powershell de Windows, donde se ejecutan los comandos de Chocolatey.  "/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;La aplicaci&#xf3;n Choapi, Chocolatey App Instaler, ha sido desarrollada en Java en un proyecto de NetBeans con Maven. Se emplean las  dependencias Font Awesome, JUnit, Log4J, SQLlite y los iconos. Toda la informaci&#xf3;n se encuentra accesible en &lt;a href=&quot;http://www.antoniohorrillo.com&quot;&gt;antoniohorrillo.com&lt;/a&gt;.&lt;/html&gt;"/>
             <Property name="alignmentX" type="float" value="0.5"/>
             <Property name="autoscrolls" type="boolean" value="true"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="texto2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;Los comandos de Chocolatey son los empleados por Choapi, lanzando powershell y ejecutandolos. Cuando un usuario elige una aplicaci&#xf3;n a instalar Choapi jejecuta powershell con el comando necesario para instalar, actualizar o desinstalar la aplicaci&#xf3;n seleccionada.Adem&#xe1;s, el usuario tiene la opci&#xf3;n de almacenar las aplicaciones que use con frecuencia en una base de datos SQLite, pudiendo acceder a ella y agregar o eliminar aplicaciones."/>
-            <Property name="alignmentX" type="float" value="0.5"/>
-            <Property name="autoscrolls" type="boolean" value="true"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="texto3">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt; Los comandos de Chocolatey son los empleados por Choapi, lanzando una powershell y ejecutando dicho comando. De esta forma, el usuario elige que aplicaci&#xf3;n quiere instalar, y Choapi la instala. Adem&#xe1;s, el usuario tiene la opci&#xf3;n de almacenar las aplicaciones que use con frecuencia en una base de datos SQLite, pudiendo acceder a ella y agregar o eliminar aplicaciones."/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt; Copyright (C) 2016 Antonio Horrillo Horrillo. This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;. &lt;/html&gt;"/>
             <Property name="alignmentX" type="float" value="0.5"/>
             <Property name="autoscrolls" type="boolean" value="true"/>
           </Properties>
