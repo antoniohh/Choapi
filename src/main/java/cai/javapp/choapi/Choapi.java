@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 /**
  * Paquete choapi.
  */
@@ -24,7 +23,6 @@ package cai.javapp.choapi;
  * Importamos las librerías necesarias.
  */
 import java.awt.Color;
-import java.awt.FileDialog;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.io.BufferedReader;
@@ -59,6 +57,8 @@ public class Choapi extends javax.swing.JFrame {
      * Variables.
      */
     private static final Logger LOG = Logger.getLogger(Choapi.class);
+    private static final String SETEXECUTIONPOLICY = "powershell Set-ExecutionPolicy Unrestricted -Force";
+    private static final String GETEXECUTIONPOLICY = "powershell Get-ExecutionPolicy";
     private static final String INSTALAR_CHOCO = "powershell iex ((new-object "
             + "net.webclient).DownloadString('https://chocolatey.org/install.ps1'))";
     private static final String INSTALAR = "choco install -y ";
@@ -71,7 +71,7 @@ public class Choapi extends javax.swing.JFrame {
     private final DefaultListModel LISTAPPMOD;
     private final Progreso PROGRESO;
     private final Ayuda AYUDA;
-    private final AcercaDe ACERCADE;    
+    private final AcercaDe ACERCADE;
     private Thread thread;
     private BufferedReader stdout;
     private BufferedReader stderr;
@@ -79,6 +79,8 @@ public class Choapi extends javax.swing.JFrame {
     private Image icon;
     private Process ps;
     private String[] os;
+    private String linea;
+    private String politica;    
 
     /**
      * Creates new form Choapi
@@ -90,11 +92,12 @@ public class Choapi extends javax.swing.JFrame {
         this.FICDB = new File(SISTEMA.getDbFile());
         this.LISTAPPMOD = new DefaultListModel();
         this.PROGRESO = new Progreso();
-        this.ACERCADE = new AcercaDe();        
+        this.ACERCADE = new AcercaDe();
         this.AYUDA = new Ayuda();
         initComponents();
         sistemaOperativo();
-        persistencia();
+        getExecutionPolicy();
+        persistencia();   
         inicioGui();
     }
 
@@ -113,7 +116,6 @@ public class Choapi extends javax.swing.JFrame {
         btninstalar = new javax.swing.JButton();
         btndesinstalar = new javax.swing.JButton();
         btnagregar = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
         btnlimpiar = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         btnconsultar = new javax.swing.JButton();
@@ -122,17 +124,20 @@ public class Choapi extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         listapp = new javax.swing.JList<>();
         jLabel1 = new javax.swing.JLabel();
-        chocoinstalar = new javax.swing.JButton();
+        btnchocoinstalar = new javax.swing.JButton();
         salir = new javax.swing.JButton();
         btnlimpiartodo = new javax.swing.JButton();
         mensajes = new javax.swing.JLabel();
         btneliminar = new javax.swing.JButton();
+        lbpoliticas = new javax.swing.JLabel();
+        btnpoliticas = new javax.swing.JButton();
         menu = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuconsultar = new javax.swing.JMenuItem();
         menuinstalartodo = new javax.swing.JMenuItem();
         menuactualizartodo = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        menuexportarDB = new javax.swing.JMenuItem();
         menusalir = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         menuayuda = new javax.swing.JMenuItem();
@@ -153,7 +158,7 @@ public class Choapi extends javax.swing.JFrame {
         jLabel2.setPreferredSize(new java.awt.Dimension(200, 30));
 
         campoapp.setBackground(java.awt.SystemColor.menu);
-        campoapp.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        campoapp.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         campoapp.setForeground(java.awt.SystemColor.textHighlight);
         campoapp.setDoubleBuffered(true);
         campoapp.setMinimumSize(new java.awt.Dimension(6, 30));
@@ -191,11 +196,6 @@ public class Choapi extends javax.swing.JFrame {
                 btnagregarActionPerformed(evt);
             }
         });
-
-        jLabel3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jLabel3.setForeground(java.awt.SystemColor.textHighlight);
-        jLabel3.setText("<html>Pulse los botones para agregar la aplicación a la base de datos, para instalar la aplicación o para desinstalar la aplicación.");
-        jLabel3.setPreferredSize(new java.awt.Dimension(580, 30));
 
         btnlimpiar.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         btnlimpiar.setForeground(java.awt.SystemColor.textInactiveText);
@@ -248,6 +248,7 @@ public class Choapi extends javax.swing.JFrame {
         });
 
         listapp.setBackground(java.awt.SystemColor.menu);
+        listapp.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         listapp.setForeground(java.awt.SystemColor.textHighlight);
         listapp.setDoubleBuffered(true);
         listapp.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -259,19 +260,19 @@ public class Choapi extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel1.setForeground(java.awt.SystemColor.textHighlight);
-        jLabel1.setText("<html>Instalamos Chocolatey si no lo tenemos instalado en el sistema. Iniciar Choapi como administrador y establecer en Powershell las políticas de ejecución sin restricciones: Set-ExecutionPolicy como Unrestricted.</html>");
+        jLabel1.setText("<html>El estado de las políticas de ejecución debe ser Unrestricted. Si el estado es Restricted, deberá pulsar el botón para cambiar el estado de la política de ejecución. Mientras que la política no sea Unrestricted no podrá instalar Chocolatey y por tanto, utilizar la aplicación Choapi..</html>");
         jLabel1.setDoubleBuffered(true);
-        jLabel1.setPreferredSize(new java.awt.Dimension(450, 50));
+        jLabel1.setPreferredSize(new java.awt.Dimension(450, 30));
 
-        chocoinstalar.setBackground(java.awt.SystemColor.activeCaption);
-        chocoinstalar.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
-        chocoinstalar.setForeground(java.awt.SystemColor.textInactiveText);
-        chocoinstalar.setDoubleBuffered(true);
-        chocoinstalar.setLabel("Instalar Chocolatey");
-        chocoinstalar.setPreferredSize(new java.awt.Dimension(250, 50));
-        chocoinstalar.addActionListener(new java.awt.event.ActionListener() {
+        btnchocoinstalar.setBackground(java.awt.SystemColor.activeCaption);
+        btnchocoinstalar.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        btnchocoinstalar.setForeground(java.awt.SystemColor.textInactiveText);
+        btnchocoinstalar.setDoubleBuffered(true);
+        btnchocoinstalar.setLabel("Instalar Chocolatey");
+        btnchocoinstalar.setPreferredSize(new java.awt.Dimension(250, 50));
+        btnchocoinstalar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chocoinstalarActionPerformed(evt);
+                btnchocoinstalarActionPerformed(evt);
             }
         });
 
@@ -310,6 +311,21 @@ public class Choapi extends javax.swing.JFrame {
             }
         });
 
+        lbpoliticas.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
+        lbpoliticas.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbpoliticas.setPreferredSize(new java.awt.Dimension(400, 50));
+
+        btnpoliticas.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        btnpoliticas.setForeground(java.awt.SystemColor.textInactiveText);
+        btnpoliticas.setText("Unrestricted");
+        btnpoliticas.setDoubleBuffered(true);
+        btnpoliticas.setPreferredSize(new java.awt.Dimension(250, 50));
+        btnpoliticas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnpoliticasActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
         panel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
@@ -317,26 +333,23 @@ public class Choapi extends javax.swing.JFrame {
             .addGroup(panelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelLayout.createSequentialGroup()
-                        .addComponent(btnagregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnagregar, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(btneliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btneliminar, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(btninstalar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btninstalar, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(btndesinstalar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btndesinstalar, javax.swing.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE)
                         .addGap(21, 21, 21)
-                        .addComponent(btnlimpiar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnlimpiar, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE))
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(campoapp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(panelLayout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(chocoinstalar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
                         .addComponent(mensajes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
@@ -348,40 +361,47 @@ public class Choapi extends javax.swing.JFrame {
                             .addComponent(btnactualizartodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnlimpiartodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2)))
+                        .addComponent(jScrollPane2))
+                    .addGroup(panelLayout.createSequentialGroup()
+                        .addComponent(lbpoliticas, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnpoliticas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnchocoinstalar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(chocoinstalar, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnchocoinstalar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbpoliticas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnpoliticas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(campoapp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnagregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btninstalar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btndesinstalar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnlimpiar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btneliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btndesinstalar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btninstalar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btneliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnagregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelLayout.createSequentialGroup()
                         .addComponent(btnconsultar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
                         .addComponent(btnlimpiartodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
                         .addComponent(btninstalartodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
                         .addComponent(btnactualizartodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2))
                 .addGap(18, 18, 18)
@@ -422,6 +442,15 @@ public class Choapi extends javax.swing.JFrame {
         });
         jMenu1.add(menuactualizartodo);
         jMenu1.add(jSeparator1);
+
+        menuexportarDB.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        menuexportarDB.setText("Exportar Base de Datos");
+        menuexportarDB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuexportarDBActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuexportarDB);
 
         menusalir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         menusalir.setText("Salir de Choapi");
@@ -479,7 +508,7 @@ public class Choapi extends javax.swing.JFrame {
         try {
             consultarTodo();
         } catch (Exception e) {
-        }       
+        }
     }//GEN-LAST:event_menuconsultarActionPerformed
 
     private void menuactualizartodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuactualizartodoActionPerformed
@@ -487,7 +516,7 @@ public class Choapi extends javax.swing.JFrame {
         try {
             actualizarTodo();
         } catch (Exception e) {
-        }        
+        }
     }//GEN-LAST:event_menuactualizartodoActionPerformed
 
     private void menuinstalartodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuinstalartodoActionPerformed
@@ -501,20 +530,20 @@ public class Choapi extends javax.swing.JFrame {
     private void menusalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menusalirActionPerformed
         // TODO add your handling code here:
         // Salimos de la aplicación.
-        System.exit(0);        
+        System.exit(0);
     }//GEN-LAST:event_menusalirActionPerformed
 
     private void menuayudaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuayudaActionPerformed
         // TODO add your handling code here:
         // Hacemos visible el JFrame de Ayuda.
-        AYUDA.setVisible(true); 
+        AYUDA.setVisible(true);
     }//GEN-LAST:event_menuayudaActionPerformed
 
     private void menuacercadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuacercadeActionPerformed
         // TODO add your handling code here:
         // Hacemos visible el JFrame de Acerca de.
         ACERCADE.setSalidaSO(SISTEMA.sistemaOperativo());
-        ACERCADE.setSalidaJavaHome(SISTEMA.javaHome()); 
+        ACERCADE.setSalidaJavaHome(SISTEMA.javaHome());
         ACERCADE.setVisible(true);
     }//GEN-LAST:event_menuacercadeActionPerformed
 
@@ -530,13 +559,13 @@ public class Choapi extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_salirActionPerformed
 
-    private void chocoinstalarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chocoinstalarActionPerformed
+    private void btnchocoinstalarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnchocoinstalarActionPerformed
         // TODO add your handling code here:
         try {
             instalarchocolatey();
         } catch (Exception e) {
         }
-    }//GEN-LAST:event_chocoinstalarActionPerformed
+    }//GEN-LAST:event_btnchocoinstalarActionPerformed
 
     private void listappMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listappMouseClicked
         // TODO add your handling code here:
@@ -607,8 +636,24 @@ public class Choapi extends javax.swing.JFrame {
         try {
             eliminar();
         } catch (Exception e) {
-        }  
+        }
     }//GEN-LAST:event_btneliminarActionPerformed
+
+    private void menuexportarDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuexportarDBActionPerformed
+        // TODO add your handling code here:
+        try {
+            exportarDB();
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_menuexportarDBActionPerformed
+
+    private void btnpoliticasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnpoliticasActionPerformed
+        // TODO add your handling code here:
+        try {
+            setExecutionPolicy();
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_btnpoliticasActionPerformed
 
     /**
      * @param args the cmd line arguments
@@ -646,6 +691,58 @@ public class Choapi extends javax.swing.JFrame {
     }
 
     /**
+     * Método getExecutionPolicy().
+     *
+     * Identificamos el estado de Windows PowerShell Script Execution Policy.
+     *
+     * @return
+     */
+    private void getExecutionPolicy() {
+        try {
+            ps = Runtime.getRuntime().exec(GETEXECUTIONPOLICY);
+            ps.getOutputStream().close();
+            stdout = new BufferedReader(new InputStreamReader(ps.getInputStream()));
+            stderr = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
+            while ((linea = stdout.readLine()) != null) {
+                System.out.println("El estado de ExecutionPolicy es: " + linea);
+                politica = linea;
+            }
+            while ((linea = stderr.readLine()) != null) {
+                System.out.println(linea);
+            }
+            stderr.close();
+            stdout.close();
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(Choapi.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.fatal("Error al obtener ExecutionPolicy: ", ex);
+        }
+    }
+
+    /**
+     * Método setExecutionPolicy().
+     *
+     * Set-ExecutionPolicy Unrestricted.
+     */
+    private void setExecutionPolicy() {
+        try {
+            ejecutar(SETEXECUTIONPOLICY);
+            LOG.info("Set-ExecutionPolicy Unrestricted Aplicada con éxito.");
+            System.out.println("Set-ExecutionPolicy Unrestricted Aplicada con éxito.");
+            mensajes.setText("Set-ExecutionPolicy Unrestricted Aplicada con éxito.");
+        } catch (Exception ex) {
+            System.err.println(ex);
+            LOG.fatal("Error al aplicar ExecutionPolicy: ", ex);
+            mensajes.setText("Error al aplicar ExecutionPolicy.");
+        }
+        JOptionPane.showMessageDialog(null, "Choapi necesita cerrarse para completar el cambio de política.\n"
+                + "Una vez se complete el cierre, vuelva a iniciar Choapi y podrá instalar Chocolatey.\n"
+                + "Pulse en aceptar para salir de la aplicación."
+        );
+        // Forzamos salida de la aplicación.
+        System.exit(0);
+    }
+
+    /**
      * Método sistemaOperativo().
      *
      * Identificamos el sistema operativo en el que se ejecuta la aplicación.
@@ -662,7 +759,7 @@ public class Choapi extends javax.swing.JFrame {
         // Mensajes con el sistema operativo y la ruta de jre.
         System.out.println("Iniciando la aplicación...");
         System.out.println(SISTEMA.sistemaOperativo());
-        System.out.println(SISTEMA.javaHome());    
+        System.out.println(SISTEMA.javaHome());
     }
 
     /**
@@ -683,34 +780,38 @@ public class Choapi extends javax.swing.JFrame {
                 // Log info de conexión.
                 LOG.info("Encontrado archivo de base de datos.");
             } else {
-                System.out.println("Archivo de base de datos no existe.");               
+                System.out.println("Archivo de base de datos no existe.");
                 LOG.info("Archivo de base de datos no existe.");
                 // Preguntamos al usuario si desea importar el archivo o crear uno nuevo.               
-                Object[] opciones = { "Nueva Base de Datos", "Importar Base de Datos" };
-                int opcion = JOptionPane.showOptionDialog(null, "No existe el archivo de base de datos 'choapi.db'. \n ¿Desea importar el archivo o crear uno nuevo?", "choapi.db", 
+                Object[] opciones = {"Nueva Base de Datos", "Importar Base de Datos"};
+                String msg = "No existe el archivo de base de datos 'choapi.db'. \n"
+                        + "Choapi necesita el archivo para almacenar las aplicaciones. \n"
+                        + "Puede crear un archivo nuevo o importar un archivo exportado previamente. \n"
+                        + "¿Desea importar el archivo o crear uno nuevo?";
+                int opcion = JOptionPane.showOptionDialog(null, msg, "choapi.db",
                         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, opciones, opciones[0]);
 
-                if (opcion == JOptionPane.YES_OPTION) {                   
+                if (opcion == JOptionPane.YES_OPTION) {
                     // Metodos de la clase Dao() para crear la base de datos y tablas.                   
                     DAO.crearDB();
                     DAO.crearTabla();
                     // Log info de conexión.
-                    LOG.info("Creando archivo de base de datos en "+SISTEMA.getDbFile()+".");
-                    System.out.println("Creando archivo de base de datos en "+SISTEMA.getDbFile()+".");
-                    
+                    LOG.info("Creando archivo de base de datos en " + SISTEMA.getDbFile() + ".");
+                    System.out.println("Creando archivo de base de datos en " + SISTEMA.getDbFile() + ".");
+
                 } else {
-                     // Log info de conexión.
+                    // Log info de conexión.
                     LOG.info("Importando el archivo choapi.db...");
-                    System.out.println("Importando el archivo choapi.db...");                 
+                    System.out.println("Importando el archivo choapi.db...");
                     // La Clase JFileChooser nos permitirá Abrir el archivo choapi.db.
                     JFileChooser fc = new JFileChooser();
-                    fc.setFileSelectionMode(JFileChooser.FILES_ONLY);                  
+                    fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     // Creamos el filtro para el archivo de base de datos.
-                    FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivo choapi.db","db");
+                    FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivo choapi.db", "db");
                     // Indicamos el filtro.
-                    fc.setFileFilter(filtro);                   
+                    fc.setFileFilter(filtro);
                     // Mostramos el explorador de archivos.
-                    fc.showOpenDialog(this);                  
+                    fc.showOpenDialog(this);
                     // Asignamos el archivo seleccionado.
                     File origen = fc.getSelectedFile();
                     if (origen == null) {
@@ -718,11 +819,10 @@ public class Choapi extends javax.swing.JFrame {
                         LOG.info("Importación del archivo choapi.db cancelada por el usuario. Salida de la aplicación.");
                         System.out.println("Importación del archivo choapi.db cancelada por el usuario. Salida de la aplicación.");
                         System.exit(0);
-                    }               
-                    else {
-                        File destino = new File(SISTEMA.getDbFile());                                              
+                    } else {
+                        File destino = new File(SISTEMA.getDbFile());
                         InputStream entradaDB = new FileInputStream(origen);
-                        OutputStream salidaDB = new FileOutputStream(destino);                        
+                        OutputStream salidaDB = new FileOutputStream(destino);
                         byte[] buf = new byte[1024];
                         int len;
                         while ((len = entradaDB.read(buf)) > 0) {
@@ -730,7 +830,7 @@ public class Choapi extends javax.swing.JFrame {
                         }
                         // Cerramos los Stream.
                         entradaDB.close();
-                        salidaDB.close();                       
+                        salidaDB.close();
                         // Log info de conexión.
                         LOG.info("Importación del archivo choapi.db realizada con éxito");
                         System.out.println("Importación del archivo choapi.db realizada con éxito");
@@ -759,62 +859,77 @@ public class Choapi extends javax.swing.JFrame {
     private void inicioGui() {
         // Establecemos el icono de la barra de menus de la aplicación.        
         this.icon = new ImageIcon(getClass().getResource("/Choapi.png")).getImage();
-        setIconImage(icon);        
+        setIconImage(icon);
         //Iconos Font Awesome para botones de la aplicacion.        
         IconFontSwing.register(FontAwesome.getIconFont());
-        Icon iconOut = IconFontSwing.buildIcon(FontAwesome.SIGN_OUT,20, new Color(150, 0, 0));
+        Icon iconOut = IconFontSwing.buildIcon(FontAwesome.SIGN_OUT, 20, new Color(150, 0, 0));
         salir.setIcon(iconOut);
-        menusalir.setIcon(iconOut);        
-        Icon iconDb = IconFontSwing.buildIcon(FontAwesome.DATABASE,20,new Color(0, 150, 0));        
+        menusalir.setIcon(iconOut);
+        Icon iconDb = IconFontSwing.buildIcon(FontAwesome.DATABASE, 20, new Color(0, 150, 0));
         btnconsultar.setIcon(iconDb);
         menuconsultar.setIcon(iconDb);
-        Icon iconSave = IconFontSwing.buildIcon(FontAwesome.FLOPPY_O,20,new Color(0, 150, 0));        
+        Icon iconSave = IconFontSwing.buildIcon(FontAwesome.FLOPPY_O, 20, new Color(0, 150, 0));
         btnagregar.setIcon(iconSave);
-        Icon iconTrash = IconFontSwing.buildIcon(FontAwesome.TRASH_O,20,new Color(0, 150, 0));        
-        btneliminar.setIcon(iconTrash);               
-        Icon iconErase = IconFontSwing.buildIcon(FontAwesome.ERASER,20,new Color(0, 150, 0));        
+        menuexportarDB.setIcon(iconDb);
+        Icon iconTrash = IconFontSwing.buildIcon(FontAwesome.TRASH_O, 20, new Color(0, 150, 0));
+        btneliminar.setIcon(iconTrash);
+        Icon iconErase = IconFontSwing.buildIcon(FontAwesome.ERASER, 20, new Color(0, 150, 0));
         btnlimpiar.setIcon(iconErase);
-        btnlimpiartodo.setIcon(iconErase);        
-        Icon iconHdd = IconFontSwing.buildIcon(FontAwesome.HDD_O,20,new Color(0, 150, 0));        
+        btnlimpiartodo.setIcon(iconErase);
+        Icon iconHdd = IconFontSwing.buildIcon(FontAwesome.HDD_O, 20, new Color(0, 150, 0));
         btninstalar.setIcon(iconHdd);
         btninstalartodo.setIcon(iconHdd);
-        menuinstalartodo.setIcon(iconHdd);        
-        Icon iconBan = IconFontSwing.buildIcon(FontAwesome.BAN,20,new Color(0, 150, 0));        
-        btndesinstalar.setIcon(iconBan);        
-        Icon iconRefresh = IconFontSwing.buildIcon(FontAwesome.REFRESH,20,new Color(0, 150, 0));        
-        btnactualizartodo.setIcon(iconRefresh); 
-        menuactualizartodo.setIcon(iconRefresh); 
-        Icon iconQuestion = IconFontSwing.buildIcon(FontAwesome.QUESTION,20,new Color(0, 150, 0));        
-        menuayuda.setIcon(iconQuestion);  
-        Icon iconInfo = IconFontSwing.buildIcon(FontAwesome.INFO,20,new Color(0, 150, 0));        
+        menuinstalartodo.setIcon(iconHdd);
+        Icon iconBan = IconFontSwing.buildIcon(FontAwesome.BAN, 20, new Color(0, 150, 0));
+        btndesinstalar.setIcon(iconBan);
+        Icon iconRefresh = IconFontSwing.buildIcon(FontAwesome.REFRESH, 20, new Color(0, 150, 0));
+        btnactualizartodo.setIcon(iconRefresh);
+        menuactualizartodo.setIcon(iconRefresh);
+        Icon iconQuestion = IconFontSwing.buildIcon(FontAwesome.QUESTION, 20, new Color(0, 150, 0));
+        menuayuda.setIcon(iconQuestion);
+        Icon iconInfo = IconFontSwing.buildIcon(FontAwesome.INFO, 20, new Color(0, 150, 0));
         menuacercade.setIcon(iconInfo);
+        Icon iconPol = IconFontSwing.buildIcon(FontAwesome.SHIELD, 20, new Color(0, 150, 0));
+        btnpoliticas.setIcon(iconPol);        
+        
         // Identificamos el sistema operativo y asignamos icono correspondiente.
         if (this.os[0] != null) {
             switch (os[0]) {
                 case "Windows":
                     Icon iconWindows = IconFontSwing.buildIcon(FontAwesome.WINDOWS,
                             25, new Color(0, 150, 0));
-                    chocoinstalar.setIcon(iconWindows);
+                    btnchocoinstalar.setIcon(iconWindows);
                     break;
                 case "Linux":
                     Icon iconLinux = IconFontSwing.buildIcon(FontAwesome.LINUX,
                             25, new Color(0, 150, 0));
-                    chocoinstalar.setIcon(iconLinux);
+                    btnchocoinstalar.setIcon(iconLinux);
                     break;
                 case "Mac":
                     Icon iconApple = IconFontSwing.buildIcon(FontAwesome.APPLE,
                             25, new Color(0, 150, 0));
-                    chocoinstalar.setIcon(iconApple);
+                    btnchocoinstalar.setIcon(iconApple);
                     break;
                 default:
                     Icon iconDesktop = IconFontSwing.buildIcon(FontAwesome.DESKTOP,
                             25, new Color(0, 150, 0));
-                    chocoinstalar.setIcon(iconDesktop);
+                    btnchocoinstalar.setIcon(iconDesktop);
             }
         } else {
             Icon iconDesktop = IconFontSwing.buildIcon(FontAwesome.DESKTOP,
                     25, new Color(0, 150, 0));
-            chocoinstalar.setIcon(iconDesktop);
+            btnchocoinstalar.setIcon(iconDesktop);
+        }
+        
+        if ("Restricted".equals(politica)) {           
+            lbpoliticas.setText("Set-ExecutionPolicy "+politica);
+            lbpoliticas.setForeground(new Color(150, 0, 0));
+            btnchocoinstalar.setEnabled(false);           
+        } 
+        if ("Unrestricted".equals(politica)) {           
+            lbpoliticas.setText("Set-ExecutionPolicy "+politica);
+            lbpoliticas.setForeground(new Color(0, 150, 0));
+            btnpoliticas.setEnabled(false);           
         }
     }
 
@@ -831,23 +946,25 @@ public class Choapi extends javax.swing.JFrame {
             ps.getOutputStream().close();
             System.out.println("Proceso: " + cmd);
             stdout = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-            stderr = new BufferedReader(new InputStreamReader(ps.getErrorStream()));                   
-            while (stdout.readLine() != null) {
-                System.out.println(stdout.readLine());
+            stderr = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
+            while ((linea = stdout.readLine()) != null) {
+                System.out.println(linea);
             }
-            while (stderr.readLine() != null) {
-                System.out.println(stderr.readLine());
+            while ((linea = stderr.readLine()) != null) {
+                System.out.println(linea);
             }
+            stderr.close();
+            stdout.close();
             System.out.println("Proceso realizado.");
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(Choapi.class.getName()).log(Level.SEVERE, null, ex);
-            LOG.fatal("Error al instalar ", ex);
+            LOG.fatal("Error al ejecutar comando en powershell: ", ex);
         }
     }
 
     /**
      * Método instalarchocolatey().
-     * 
+     *
      * Instalamos la aplicación especificada en el campo principal.
      */
     public void instalarchocolatey() {
@@ -855,16 +972,18 @@ public class Choapi extends javax.swing.JFrame {
             @Override
             public void run() {
                 try {
-                    PROGRESO.setTitBarra("Instalando Chocolatey");
+                    PROGRESO.setTitBarra("Instalando Chocolatey...");
                     PROGRESO.jPr.setMaximum(2);
                     PROGRESO.jPr.setStringPainted(true);
                     PROGRESO.setVisible(true);
                     PROGRESO.jPr.setValue(1);
-                    PROGRESO.salida.insert("Instalando Chocolatey\n",0);                   
+                    PROGRESO.salida.insert("Instalando Chocolatey\n", 0);
                     ejecutar(INSTALAR_CHOCO);
                     PROGRESO.jPr.setValue(2);
+                    LOG.info("Chocolatey instalado con éxito.");
+                    System.out.println("Chocolatey instalado con éxito.");
                     mensajes.setText("Chocolatey instalada con éxito.");
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     System.err.println(ex);
                     LOG.fatal("No se ha podido instalar Chocolatey: ", ex);
                     mensajes.setText("No se ha podido instalar Chocolatey.");
@@ -874,10 +993,10 @@ public class Choapi extends javax.swing.JFrame {
         });
         thread.start();
     }
-    
+
     /**
      * Método agregar().
-     * 
+     *
      * Agregamos la aplicación especificada en la base de datos.
      */
     public void agregar() {
@@ -885,25 +1004,25 @@ public class Choapi extends javax.swing.JFrame {
             if (campoapp.getText() != null && !"".equals(campoapp.getText())) {
                 if (!DAO.comprobarApp(campoapp.getText())) {
                     DAO.insertarApp(campoapp.getText());
-                    mensajes.setText("Aplicación "+campoapp.getText()+
-                        " agregada en la base de datos.");
+                    mensajes.setText("Aplicación " + campoapp.getText()
+                            + " agregada en la base de datos.");
                 } else {
-                    mensajes.setText("Aplicación "+campoapp.getText()+
-                        " existe en la base de datos.");
+                    mensajes.setText("Aplicación " + campoapp.getText()
+                            + " existe en la base de datos.");
                 }
             } else {
                 mensajes.setText("Escriba el nombre de una aplicación.");
             }
-        } catch (Exception ex){
+        } catch (Exception ex) {
             System.err.println(ex);
             LOG.fatal("No se ha podido agregar la aplicación: ", ex);
             mensajes.setText("No se ha podido agregar la aplicación.");
         }
     }
- 
+
     /**
      * Método eliminar().
-     * 
+     *
      * Eliminamos la aplicación especificada de la base de datos.
      */
     public void eliminar() {
@@ -911,25 +1030,25 @@ public class Choapi extends javax.swing.JFrame {
             if (campoapp.getText() != null && !"".equals(campoapp.getText())) {
                 if (DAO.comprobarApp(campoapp.getText())) {
                     DAO.eliminarApp(campoapp.getText());
-                    mensajes.setText("Aplicación "+campoapp.getText()+
-                        " eliminada de la base de datos.");
+                    mensajes.setText("Aplicación " + campoapp.getText()
+                            + " eliminada de la base de datos.");
                 } else {
-                    mensajes.setText("Aplicación "+campoapp.getText()+
-                        " no existe en la base de datos.");
+                    mensajes.setText("Aplicación " + campoapp.getText()
+                            + " no existe en la base de datos.");
                 }
             } else {
                 mensajes.setText("Escriba el nombre de una aplicación.");
             }
-        } catch (Exception ex){
+        } catch (Exception ex) {
             System.err.println(ex);
             LOG.fatal("No se ha podido eliminar la aplicación: ", ex);
             mensajes.setText("No se ha podido eliminar la aplicación.");
         }
-    }   
+    }
 
     /**
      * Método instalar().
-     * 
+     *
      * Instalamos la aplicación especificada en el campo principal.
      */
     public void instalar() {
@@ -943,16 +1062,15 @@ public class Choapi extends javax.swing.JFrame {
                         PROGRESO.jPr.setStringPainted(true);
                         PROGRESO.setVisible(true);
                         PROGRESO.jPr.setValue(1);
-                        PROGRESO.salida.insert("Instalando " + campoapp.getText() + "\n",0);                   
+                        PROGRESO.salida.insert("Instalando " + campoapp.getText() + "\n", 0);
                         ejecutar(INSTALAR + campoapp.getText());
                         PROGRESO.jPr.setValue(2);
-                        mensajes.setText("Aplicación "+campoapp.getText()+
-                            " instalada con éxito.");
+                        mensajes.setText("Aplicación " + campoapp.getText()
+                                + " instalada con éxito.");
                     } else {
-                        mensajes.setText("Escriba el nombre de una aplicación.");         
+                        mensajes.setText("Escriba el nombre de una aplicación.");
                     }
-
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     System.err.println(ex);
                     LOG.fatal("No se ha podido instalar la aplicación: ", ex);
                     mensajes.setText("No se ha podido instalar la aplicación.");
@@ -962,10 +1080,10 @@ public class Choapi extends javax.swing.JFrame {
         });
         thread.start();
     }
- 
+
     /**
      * Método desinstalar().
-     * 
+     *
      * Desinstalamos la aplicación especificada en el campo principal.
      */
     public void desinstalar() {
@@ -979,15 +1097,15 @@ public class Choapi extends javax.swing.JFrame {
                         PROGRESO.jPr.setStringPainted(true);
                         PROGRESO.setVisible(true);
                         PROGRESO.jPr.setValue(1);
-                        PROGRESO.salida.insert("Desinstalando " + campoapp.getText() + "\n",0);                   
+                        PROGRESO.salida.insert("Desinstalando " + campoapp.getText() + "\n", 0);
                         ejecutar(DESINSTALAR + campoapp.getText());
                         PROGRESO.jPr.setValue(2);
-                        mensajes.setText("Aplicación "+campoapp.getText()+
-                            " desinstalada con éxito.");
+                        mensajes.setText("Aplicación " + campoapp.getText()
+                                + " desinstalada con éxito.");
                     } else {
-                        mensajes.setText("Escriba el nombre de una aplicación.");        
+                        mensajes.setText("Escriba el nombre de una aplicación.");
                     }
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     System.err.println(ex);
                     LOG.fatal("No se ha podido desinstalar la aplicación: ", ex);
                     mensajes.setText("No se ha podido desinstalar la aplicación.");
@@ -997,10 +1115,10 @@ public class Choapi extends javax.swing.JFrame {
         });
         thread.start();
     }
-    
+
     /**
      * Método consultarTodo().
-     * 
+     *
      * Consultamos las aplicaciones almacenadas en la base de datos.
      */
     public void consultarTodo() {
@@ -1021,9 +1139,9 @@ public class Choapi extends javax.swing.JFrame {
 
     /**
      * Método instalarTodo().
-     * 
+     *
      * Instala todas las aplicaciones almacenadas en la base de datos.
-     * 
+     *
      * Integra una barra de progreso.
      */
     public void instalarTodo() {
@@ -1037,8 +1155,8 @@ public class Choapi extends javax.swing.JFrame {
             public void run() {
                 try {
                     for (int i = 0; i < lista.size(); i++) {
-                        PROGRESO.jPr.setValue(i+1);
-                        PROGRESO.salida.insert("Instalando " + lista.get(i).toString() + "\n",0);
+                        PROGRESO.jPr.setValue(i + 1);
+                        PROGRESO.salida.insert("Instalando " + lista.get(i).toString() + "\n", 0);
                         ejecutar(INSTALAR + lista.get(i).toString());
                     }
                     mensajes.setText("Se han instalado las aplicaciones.");
@@ -1046,19 +1164,19 @@ public class Choapi extends javax.swing.JFrame {
                     System.err.println(ex);
                     LOG.fatal("No se ha podido instalar las aplicaciones: ", ex);
                     mensajes.setText("No se ha podido instalar las aplicaciones.");
-                }                
+                }
                 PROGRESO.dispose();
             }
         });
         thread.start();
     }
-    
+
     /**
      * Método instalarTodo().
-     * 
-     * Actualiza a las últimas versiones las aplicaciones almacenadas en la 
-     * base de datos.
-     * 
+     *
+     * Actualiza a las últimas versiones las aplicaciones almacenadas en la base
+     * de datos.
+     *
      * Integra una barra de progreso.
      */
     public void actualizarTodo() {
@@ -1072,8 +1190,8 @@ public class Choapi extends javax.swing.JFrame {
             public void run() {
                 try {
                     for (int i = 0; i < lista.size(); i++) {
-                        PROGRESO.jPr.setValue(i+1);
-                        PROGRESO.salida.insert("Actualizando " + lista.get(i).toString() + "\n",0);                        
+                        PROGRESO.jPr.setValue(i + 1);
+                        PROGRESO.salida.insert("Actualizando " + lista.get(i).toString() + "\n", 0);
                         ejecutar(ACTUALIZAR + lista.get(i).toString());
                     }
                     mensajes.setText("Se han actualizado las aplicaciones.");
@@ -1081,16 +1199,64 @@ public class Choapi extends javax.swing.JFrame {
                     System.err.println(ex);
                     LOG.fatal("No se ha podido actualizar las aplicaciones: ", ex);
                     mensajes.setText("No se ha podido actualizar las aplicaciones.");
-                }                
+                }
                 PROGRESO.dispose();
             }
         });
         thread.start();
     }
 
+    /**
+     * Método exportarDB().
+     *
+     * Exportamos la base de datos.
+     */
+    private void exportarDB() {
+        try {
+            // La Clase JFileChooser nos permitirá Abrir el archivo choapi.db.
+            JFileChooser fc = new JFileChooser();
+            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            // Creamos el filtro para el archivo de base de datos.
+            FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivo choapi.db", "db");
+            // Indicamos el filtro.
+            fc.setFileFilter(filtro);
+            // Mostramos el explorador de archivos.           
+            fc.showSaveDialog(this);
+            // Asignamos el archivo seleccionado.
+            File destino = fc.getSelectedFile();
+            if (destino == null) {
+                // Log info de la exportación.
+                LOG.info("Exportación del archivo choapi.db cancelada por el usuario.");
+                System.out.println("Exportación del archivo choapi.db cancelada por el usuario.");
+                mensajes.setText("Exportación del archivo choapi.db cancelada por el usuario.");
+            } else {
+                File origen = new File(SISTEMA.getDbFile());
+                InputStream entradaDB = new FileInputStream(origen);
+                OutputStream salidaDB = new FileOutputStream(destino);
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = entradaDB.read(buf)) > 0) {
+                    salidaDB.write(buf, 0, len);
+                }
+                // Cerramos los Stream.
+                entradaDB.close();
+                salidaDB.close();
+                // Log info de conexión.
+                LOG.info("Exportación del archivo choapi.db realizada con éxito.");
+                System.out.println("Exportación del archivo choapi.db realizada con éxito.");
+                mensajes.setText("Exportación del archivo choapi.db realizada con éxito.");
+            }
+        } catch (IOException ex) {
+            System.err.println(ex);
+            LOG.fatal("No se ha podido exportar la base de datos: ", ex);
+            mensajes.setText("No se ha podido exportar la base de datos.");
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnactualizartodo;
     private javax.swing.JButton btnagregar;
+    private javax.swing.JButton btnchocoinstalar;
     private javax.swing.JButton btnconsultar;
     private javax.swing.JButton btndesinstalar;
     private javax.swing.JButton btneliminar;
@@ -1098,17 +1264,17 @@ public class Choapi extends javax.swing.JFrame {
     private javax.swing.JButton btninstalartodo;
     private javax.swing.JButton btnlimpiar;
     private javax.swing.JButton btnlimpiartodo;
+    private javax.swing.JButton btnpoliticas;
     private javax.swing.JTextField campoapp;
-    private javax.swing.JButton chocoinstalar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JLabel lbpoliticas;
     private javax.swing.JList<String> listapp;
     private javax.swing.JLabel mensajes;
     private javax.swing.JMenuBar menu;
@@ -1116,6 +1282,7 @@ public class Choapi extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuactualizartodo;
     private javax.swing.JMenuItem menuayuda;
     private javax.swing.JMenuItem menuconsultar;
+    private javax.swing.JMenuItem menuexportarDB;
     private javax.swing.JMenuItem menuinstalartodo;
     private javax.swing.JMenuItem menusalir;
     private javax.swing.JPanel panel;

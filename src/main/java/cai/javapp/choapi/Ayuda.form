@@ -78,7 +78,7 @@
                   <Component id="texto2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="texto3" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="110" max="32767" attributes="0"/>
+                  <EmptySpace pref="174" max="32767" attributes="0"/>
                   <Component id="firma" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="aceptar" min="-2" max="-2" attributes="0"/>
@@ -125,7 +125,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="texto2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;Los comandos de Chocolatey son los empleados por Choapi, lanzando powershell y ejecutandolos. Cuando un usuario elige una aplicaci&#xf3;n a instalar Choapi jejecuta powershell con el comando necesario para instalar, actualizar o desinstalar la aplicaci&#xf3;n seleccionada.Adem&#xe1;s, el usuario tiene la opci&#xf3;n de almacenar las aplicaciones que use con frecuencia en una base de datos SQLite, pudiendo acceder a ella y agregar o eliminar aplicaciones."/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;Los comandos de Chocolatey son los empleados por Choapi, lanzando powershell y ejecutandolos. Cuando un usuario elige una aplicaci&#xf3;n a instalar Choapi ejecuta un powershell con el comando necesario para instalar, actualizar o desinstalar la aplicaci&#xf3;n seleccionada. Adem&#xe1;s, el usuario tiene la opci&#xf3;n de almacenar las aplicaciones que use con frecuencia en una base de datos SQLite, pudiendo acceder a ella y agregar o eliminar aplicaciones."/>
             <Property name="alignmentX" type="float" value="0.5"/>
             <Property name="autoscrolls" type="boolean" value="true"/>
           </Properties>

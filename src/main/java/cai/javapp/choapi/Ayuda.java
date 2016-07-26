@@ -74,7 +74,7 @@ public class Ayuda extends javax.swing.JFrame {
         texto1.setAlignmentX(0.5F);
         texto1.setAutoscrolls(true);
 
-        texto2.setText("<html>Los comandos de Chocolatey son los empleados por Choapi, lanzando powershell y ejecutandolos. Cuando un usuario elige una aplicación a instalar Choapi jejecuta powershell con el comando necesario para instalar, actualizar o desinstalar la aplicación seleccionada.Además, el usuario tiene la opción de almacenar las aplicaciones que use con frecuencia en una base de datos SQLite, pudiendo acceder a ella y agregar o eliminar aplicaciones.");
+        texto2.setText("<html>Los comandos de Chocolatey son los empleados por Choapi, lanzando powershell y ejecutandolos. Cuando un usuario elige una aplicación a instalar Choapi ejecuta un powershell con el comando necesario para instalar, actualizar o desinstalar la aplicación seleccionada. Además, el usuario tiene la opción de almacenar las aplicaciones que use con frecuencia en una base de datos SQLite, pudiendo acceder a ella y agregar o eliminar aplicaciones.");
         texto2.setAlignmentX(0.5F);
         texto2.setAutoscrolls(true);
 
@@ -111,7 +111,7 @@ public class Ayuda extends javax.swing.JFrame {
                 .addComponent(texto2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(texto3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 174, Short.MAX_VALUE)
                 .addComponent(firma)
                 .addGap(18, 18, 18)
                 .addComponent(aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
